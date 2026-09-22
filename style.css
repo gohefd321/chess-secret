@@ -1,0 +1,135 @@
+:root {
+  --ink: #171813;
+  --paper: #f1ecdf;
+  --cream: #fff9ed;
+  --moss: #26372d;
+  --moss-light: #415849;
+  --coral: #ef6b56;
+  --line: rgba(23, 24, 19, 0.18);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: "DM Sans", sans-serif; overflow-x: hidden; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; }
+
+.site-header { height: 74px; padding: 0 clamp(22px, 5vw, 76px); display: flex; align-items: center; justify-content: space-between; background: var(--paper); border-bottom: 1px solid var(--line); position: relative; z-index: 20; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: "Gowun Batang", serif; font-weight: 700; }
+.brand-mark { width: 31px; height: 31px; display: grid; place-items: center; color: var(--paper); background: var(--ink); border-radius: 50%; font-size: 17px; }
+nav { display: flex; gap: 34px; font-size: 13px; font-weight: 600; letter-spacing: .05em; }
+nav a { position: relative; }
+nav a::after { content: ""; position: absolute; left: 0; bottom: -7px; width: 0; height: 2px; background: var(--coral); transition: width .25s; }
+nav a:hover::after { width: 100%; }
+.menu-toggle { display: none; background: none; border: 0; }
+
+.hero { min-height: calc(100svh - 74px); position: relative; display: flex; align-items: center; color: var(--cream); isolation: isolate; }
+.hero-image { position: absolute; inset: 0; z-index: -2; background: url("assets/chess-hero.png") center center / cover no-repeat; }
+.hero-shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(6,13,10,.9) 0%, rgba(6,13,10,.65) 36%, rgba(6,13,10,.05) 72%), linear-gradient(0deg, rgba(5,9,7,.45), transparent 45%); }
+.hero-copy { width: min(780px, 82vw); margin-left: clamp(24px, 8vw, 132px); padding: 90px 0; }
+.eyebrow { margin: 0 0 24px; color: #d6cbb3; font-size: 12px; letter-spacing: .21em; font-weight: 600; }
+.hero h1, h2 { font-family: "Gowun Batang", serif; font-weight: 400; }
+.hero h1 { margin: 0; font-size: clamp(43px, 5.7vw, 88px); line-height: 1.15; letter-spacing: -.055em; }
+.hero h1 em, h2 i { color: var(--coral); font-style: normal; }
+.hero-intro { margin: 30px 0 44px; color: #d8d3c8; font-family: "Gowun Batang", serif; font-size: clamp(16px, 1.4vw, 21px); }
+.round-link { width: 116px; height: 116px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid rgba(255,255,255,.45); border-radius: 50%; font-size: 13px; line-height: 1.45; transition: .3s; }
+.round-link b { align-self: flex-end; font-size: 20px; }
+.round-link:hover { background: var(--coral); border-color: var(--coral); transform: rotate(-5deg); }
+.hero-caption { position: absolute; right: 4vw; bottom: 4vh; margin: 0; text-align: right; font-family: "Gowun Batang", serif; font-size: 13px; line-height: 1.7; color: rgba(255,255,255,.68); }
+
+.section-pad { padding: clamp(82px, 10vw, 150px) clamp(22px, 8vw, 130px); }
+.section-label { display: flex; align-items: center; gap: 15px; font-size: 11px; letter-spacing: .2em; font-weight: 600; }
+.section-label span { width: 31px; height: 31px; display: grid; place-items: center; border: 1px solid currentColor; border-radius: 50%; letter-spacing: 0; }
+.intro-grid { margin-top: 72px; display: grid; grid-template-columns: 1.1fr .9fr; gap: 10vw; align-items: start; }
+.intro h2, .moments h2, .puzzle h2 { margin: 0; font-size: clamp(42px, 5.4vw, 76px); line-height: 1.15; letter-spacing: -.055em; }
+.intro-copy { padding-top: 13px; font-family: "Gowun Batang", serif; font-size: clamp(16px, 1.3vw, 20px); line-height: 1.9; }
+.intro-copy p { margin: 0 0 25px; }
+.fact-strip { margin-top: 88px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); display: grid; grid-template-columns: repeat(3, 1fr); }
+.fact-strip div { padding: 33px 6%; display: flex; align-items: baseline; gap: 14px; border-right: 1px solid var(--line); }
+.fact-strip div:last-child { border: 0; }
+.fact-strip strong { font-family: "Gowun Batang", serif; font-size: clamp(37px, 4vw, 58px); font-weight: 400; }
+.fact-strip span { color: #69685f; font-size: 13px; }
+
+.moments { background: var(--moss); color: var(--cream); }
+.section-label.light { color: #c3c9bd; }
+.moments-heading { margin: 68px 0 60px; display: flex; justify-content: space-between; align-items: end; }
+.moments-heading p { max-width: 240px; color: #bfc5bb; line-height: 1.7; }
+.moment-list { border-top: 1px solid rgba(255,255,255,.2); }
+.moment-card { min-height: 220px; padding: 28px 0; display: grid; grid-template-columns: 70px 190px 1fr; gap: 30px; align-items: center; border-bottom: 1px solid rgba(255,255,255,.2); }
+.card-no { align-self: start; padding-top: 7px; color: #9aa49a; font-size: 12px; }
+.piece-art { color: var(--coral); font-family: serif; font-size: 120px; line-height: 1; text-align: center; transition: .35s; }
+.moment-card:hover .piece-art { transform: rotate(-8deg) translateY(-6px); }
+.moment-card:nth-child(2) .piece-art { color: #ebe3d4; }
+.moment-card:nth-child(3) .piece-art { color: #8ca18f; }
+.moment-card h3 { margin: 0 0 15px; font-family: "Gowun Batang", serif; font-size: clamp(24px, 2.2vw, 34px); font-weight: 400; }
+.moment-card p { max-width: 650px; margin: 0; color: #bdc3b8; line-height: 1.8; font-family: "Gowun Batang", serif; }
+
+.puzzle { display: grid; grid-template-columns: .85fr 1.15fr; gap: 9vw; align-items: center; background: #e7e0d1; }
+.puzzle-copy .section-label { margin-bottom: 65px; }
+.coral { color: var(--coral); margin-bottom: 15px; }
+.puzzle-copy > p:not(.eyebrow) { max-width: 440px; margin: 25px 0; font-family: "Gowun Batang", serif; font-size: 17px; line-height: 1.8; }
+.puzzle-status { min-height: 50px; margin-top: 34px; padding: 15px 18px; border-left: 3px solid var(--coral); background: rgba(255,255,255,.44); font-size: 14px; }
+.puzzle-status.success { background: var(--moss); color: white; }
+.reset-button { margin-top: 16px; padding: 0; border: 0; border-bottom: 1px solid; background: transparent; cursor: pointer; font-size: 13px; }
+.board-wrap { max-width: 620px; }
+.board-topline { margin-bottom: 12px; display: flex; justify-content: space-between; font-size: 11px; letter-spacing: .18em; }
+.board-topline span:last-child { font-size: 23px; color: var(--coral); }
+.chessboard { width: 100%; aspect-ratio: 1; display: grid; grid-template-columns: repeat(8, 1fr); border: 10px solid var(--ink); box-shadow: 18px 20px 0 rgba(38,55,45,.15); }
+.square { position: relative; display: grid; place-items: center; border: 0; padding: 0; cursor: default; font-family: Georgia, serif; font-size: clamp(24px, 4.5vw, 54px); line-height: 1; }
+.square.light { background: #e8dfca; }
+.square.dark { background: #73806d; }
+.square.white-piece { color: #fff9ea; text-shadow: 0 2px 1px #31352f, 0 0 2px #31352f; cursor: pointer; }
+.square.black-piece { color: #20231f; text-shadow: 0 1px rgba(255,255,255,.22); }
+.square.selected::after { content: ""; position: absolute; inset: 6px; border: 3px solid var(--coral); border-radius: 50%; }
+.square.target::before { content: ""; position: absolute; width: 22%; aspect-ratio: 1; border-radius: 50%; background: var(--coral); opacity: .85; }
+.square.mated { background: var(--coral); }
+.board-hint { margin-top: 22px; color: #64655d; font-size: 12px; text-align: center; }
+
+.closing { min-height: 540px; padding: 80px 10vw; display: grid; grid-template-columns: 1fr 1fr; align-items: center; overflow: hidden; background: var(--coral); color: var(--ink); }
+.closing-piece { align-self: end; height: 460px; font-family: Georgia, serif; font-size: clamp(330px, 42vw, 610px); line-height: .9; color: #f6e9d4; transform: translate(-12%, 24%); text-shadow: 20px 22px 0 rgba(80,40,29,.14); }
+.closing-copy { position: relative; z-index: 1; }
+.closing-copy p { font-family: "Gowun Batang", serif; font-size: 22px; line-height: 1.6; }
+.closing h2 { margin: 20px 0 38px; font-size: clamp(46px, 6vw, 85px); letter-spacing: -.06em; }
+.closing a { display: inline-flex; gap: 55px; padding: 16px 0; border-bottom: 2px solid; font-weight: 600; }
+
+footer { min-height: 92px; padding: 20px clamp(22px, 5vw, 76px); display: flex; align-items: center; justify-content: space-between; background: var(--ink); color: #ddd6c8; font-size: 11px; letter-spacing: .12em; }
+footer button { color: inherit; border: 0; background: none; cursor: pointer; letter-spacing: inherit; }
+
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+.hero-copy.reveal { opacity: 1; transform: none; }
+
+@media (max-width: 800px) {
+  .site-header { height: 64px; }
+  .menu-toggle { display: block; cursor: pointer; }
+  nav { position: absolute; top: 64px; left: 0; right: 0; padding: 22px; justify-content: center; background: var(--paper); border-bottom: 1px solid var(--line); transform: translateY(-140%); transition: transform .3s; z-index: -1; }
+  nav.open { transform: translateY(0); }
+  .hero { min-height: calc(100svh - 64px); align-items: end; }
+  .hero-image { background-position: 62% center; }
+  .hero-shade { background: linear-gradient(0deg, rgba(6,13,10,.94), rgba(6,13,10,.12) 90%); }
+  .hero-copy { width: auto; margin: 0; padding: 70px 24px 45px; }
+  .hero-caption { display: none; }
+  .round-link { width: auto; height: auto; padding: 13px 0; flex-direction: row; border: 0; border-radius: 0; border-bottom: 1px solid; }
+  .round-link br { display: none; }
+  .intro-grid, .puzzle { grid-template-columns: 1fr; gap: 55px; }
+  .intro-grid { margin-top: 50px; }
+  .fact-strip div { padding: 24px 7px; flex-direction: column; gap: 2px; }
+  .moments-heading { display: block; }
+  .moments-heading p { margin-top: 25px; }
+  .moment-card { grid-template-columns: 35px 80px 1fr; gap: 12px; min-height: 180px; }
+  .piece-art { font-size: 75px; }
+  .moment-card p { font-size: 14px; }
+  .puzzle-copy .section-label { margin-bottom: 48px; }
+  .square { font-size: clamp(26px, 9vw, 48px); }
+  .closing { min-height: 620px; grid-template-columns: 1fr; padding-bottom: 0; }
+  .closing-copy { grid-row: 1; }
+  .closing-piece { grid-row: 2; height: 250px; justify-self: center; transform: translateY(25%); font-size: 340px; }
+  footer { gap: 15px; flex-wrap: wrap; }
+  footer > span:nth-child(2) { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: .01ms !important; }
+  .reveal { opacity: 1; transform: none; }
+}

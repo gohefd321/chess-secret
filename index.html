@@ -7,37 +7,38 @@
     <title>나만 아는 재미 — 체스</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Gaegu:wght@400;700&family=Gowun+Batang:wght@400;700&family=Hahmlet:wght@400;500;600;700&family=Song+Myung&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <header class="site-header" id="top">
-      <a class="brand" href="#top" aria-label="처음으로">
+    <header class="site-header">
+      <a class="brand" href="#home" data-route="home" aria-label="첫 페이지로">
         <span class="brand-mark">♞</span>
         <span>나만 아는 재미</span>
       </a>
       <button class="menu-toggle" aria-expanded="false" aria-controls="site-nav">메뉴</button>
       <nav id="site-nav" aria-label="주요 메뉴">
-        <a href="#charm">매력</a>
-        <a href="#moments">순간들</a>
-        <a href="#puzzle">한 수</a>
+        <a href="#home" data-route="home">홈</a>
+        <a href="#charm" data-route="charm">매력</a>
+        <a href="#moments" data-route="moments">순간들</a>
+        <a href="#puzzle" data-route="puzzle">한 수</a>
       </nav>
     </header>
 
-    <main>
-      <section class="hero" aria-labelledby="hero-title">
+    <main id="page-container">
+      <section class="hero page active" data-page="home" aria-labelledby="hero-title">
         <div class="hero-image" aria-hidden="true"></div>
         <div class="hero-shade"></div>
         <div class="hero-copy reveal">
           <p class="eyebrow">MY QUIET OBSESSION · 01</p>
           <h1 id="hero-title">말을 움직이는 게 아니라,<br /><em>생각을 뒤집는 일.</em></h1>
           <p class="hero-intro">내가 오래 숨겨둔 재미, 체스를 소개할게.</p>
-          <a class="round-link" href="#charm"><span>왜 좋은지<br />들어볼래?</span><b>↓</b></a>
+          <a class="round-link" href="#charm" data-route="charm"><span>왜 좋은지<br />들어볼래?</span><b>→</b></a>
         </div>
         <p class="hero-caption">64칸 위에서는<br />언제나 다른 이야기가 시작된다.</p>
       </section>
 
-      <section class="intro section-pad" id="charm">
+      <section class="intro section-pad page" data-page="charm" hidden>
         <div class="section-label reveal"><span>01</span> CHARM</div>
         <div class="intro-grid">
           <h2 class="reveal">조용한데,<br />이상하게 <i>짜릿해.</i></h2>
@@ -51,9 +52,10 @@
           <div><strong>32</strong><span>개의 말</span></div>
           <div><strong>∞</strong><span>개의 이야기</span></div>
         </div>
+        <a class="page-next reveal" href="#moments" data-route="moments"><small>NEXT PAGE</small><span>좋아하는 세 순간 보기</span><b>→</b></a>
       </section>
 
-      <section class="moments section-pad" id="moments">
+      <section class="moments section-pad page" data-page="moments" hidden>
         <div class="section-label light reveal"><span>02</span> THE MOMENTS</div>
         <div class="moments-heading reveal">
           <h2>내가 체스를<br />좋아하는 <i>세 순간</i></h2>
@@ -76,9 +78,10 @@
             <div><h3>패배의 이유를 알았을 때</h3><p>졌는데도 재미있다. 딱 한 수 전으로 돌아가 ‘아, 여기였구나’를 찾으면 다음 판이 벌써 기다려진다.</p></div>
           </article>
         </div>
+        <a class="page-next light-next reveal" href="#puzzle" data-route="puzzle"><small>NEXT PAGE</small><span>직접 한 수 찾아보기</span><b>→</b></a>
       </section>
 
-      <section class="puzzle section-pad" id="puzzle">
+      <section class="puzzle section-pad page" data-page="puzzle" hidden>
         <div class="puzzle-copy reveal">
           <div class="section-label"><span>03</span> YOUR TURN</div>
           <p class="eyebrow rainbow-text">30초만 빌려줘</p>
@@ -86,6 +89,7 @@
           <p>백의 차례. 퀸을 움직여 한 수 만에 체크메이트를 만들어 보자.</p>
           <div class="puzzle-status" id="puzzle-status" role="status" aria-live="polite">흰색 퀸을 먼저 선택해 주세요.</div>
           <button class="reset-button" id="reset-puzzle" type="button">처음부터 ↻</button>
+          <a class="puzzle-next" href="#closing" data-route="closing">마지막 이야기 <span>→</span></a>
         </div>
         <div class="board-wrap reveal">
           <div class="board-topline"><span>WHITE TO MOVE</span><span>♕</span></div>
@@ -94,12 +98,12 @@
         </div>
       </section>
 
-      <section class="closing">
+      <section class="closing page" data-page="closing" hidden>
         <div class="closing-piece" aria-hidden="true">♙</div>
         <div class="closing-copy reveal">
           <p>나만 알기엔<br />조금 아까운 재미.</p>
           <h2>오늘, 한 판 어때?</h2>
-          <a href="#puzzle">첫 수 두러 가기 <span>↗</span></a>
+          <a href="#puzzle" data-route="puzzle">첫 수 다시 두기 <span>↗</span></a>
         </div>
       </section>
     </main>
@@ -107,7 +111,7 @@
     <footer>
       <span>♞ 나만 아는 재미</span>
       <span>CHESS, ONE MOVE AT A TIME.</span>
-      <button type="button" id="to-top">맨 위로 ↑</button>
+      <button type="button" id="to-top">첫 페이지 ↑</button>
     </footer>
     <script src="script.js"></script>
   </body>

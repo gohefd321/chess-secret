@@ -1,5 +1,47 @@
 const menuButton = document.querySelector('.menu-toggle');
 const nav = document.querySelector('#site-nav');
+const pages = [...document.querySelectorAll('[data-page]')];
+const routeLinks = [...document.querySelectorAll('[data-route]')];
+const pageTitles = {
+  home: '나만 아는 재미 — 체스',
+  charm: '체스의 매력 — 나만 아는 재미',
+  moments: '좋아하는 세 순간 — 나만 아는 재미',
+  puzzle: '당신의 한 수 — 나만 아는 재미',
+  closing: '오늘, 한 판 어때? — 나만 아는 재미'
+};
+
+function showPage(route) {
+  const currentRoute = pageTitles[route] ? route : 'home';
+  const targetPage = document.querySelector(`[data-page="${currentRoute}"]`);
+
+  pages.forEach((page) => {
+    page.hidden = page !== targetPage;
+    page.classList.remove('active');
+  });
+
+  targetPage.hidden = false;
+  requestAnimationFrame(() => {
+    targetPage.classList.add('active');
+    targetPage.querySelectorAll('.reveal').forEach((element) => element.classList.add('visible'));
+  });
+
+  routeLinks.forEach((link) => {
+    if (link.closest('nav')) {
+      if (link.dataset.route === currentRoute) link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    }
+  });
+
+  document.title = pageTitles[currentRoute];
+  nav.classList.remove('open');
+  menuButton.setAttribute('aria-expanded', 'false');
+  menuButton.textContent = '메뉴';
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+function routeFromHash() {
+  showPage(window.location.hash.slice(1) || 'home');
+}
 
 menuButton.addEventListener('click', () => {
   const isOpen = nav.classList.toggle('open');
@@ -7,13 +49,7 @@ menuButton.addEventListener('click', () => {
   menuButton.textContent = isOpen ? '닫기' : '메뉴';
 });
 
-nav.querySelectorAll('a').forEach((link) => {
-  link.addEventListener('click', () => {
-    nav.classList.remove('open');
-    menuButton.setAttribute('aria-expanded', 'false');
-    menuButton.textContent = '메뉴';
-  });
-});
+window.addEventListener('hashchange', routeFromHash);
 
 const observer = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
@@ -105,6 +141,10 @@ function resetPuzzle() {
 }
 
 resetButton.addEventListener('click', resetPuzzle);
-document.querySelector('#to-top').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+document.querySelector('#to-top').addEventListener('click', () => {
+  if (window.location.hash === '#home') showPage('home');
+  else window.location.hash = 'home';
+});
 
 drawBoard();
+routeFromHash();

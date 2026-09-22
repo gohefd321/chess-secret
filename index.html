@@ -29,6 +29,7 @@
       <section class="hero page active" data-page="home" aria-labelledby="hero-title">
         <div class="hero-image" aria-hidden="true"></div>
         <div class="hero-shade"></div>
+        <div class="hero-floaters" aria-hidden="true"><span>♙</span><span>♞</span><span>♜</span></div>
         <div class="hero-copy reveal">
           <p class="eyebrow">MY QUIET OBSESSION · 01</p>
           <h1 id="hero-title">말을 움직이는 게 아니라,<br /><em>생각을 뒤집는 일.</em></h1>
@@ -82,19 +83,33 @@
       </section>
 
       <section class="puzzle section-pad page" data-page="puzzle" hidden>
+        <div class="puzzle-glow glow-one" aria-hidden="true"></div>
+        <div class="puzzle-glow glow-two" aria-hidden="true"></div>
         <div class="puzzle-copy reveal">
           <div class="section-label"><span>03</span> YOUR TURN</div>
-          <p class="eyebrow rainbow-text">30초만 빌려줘</p>
-          <h2>당신의 한 수는?</h2>
-          <p>백의 차례. 퀸을 움직여 한 수 만에 체크메이트를 만들어 보자.</p>
+          <div class="puzzle-meta">
+            <p class="eyebrow rainbow-text">PUZZLE <b id="puzzle-number">01</b> / <span id="puzzle-total">04</span></p>
+            <span class="difficulty" id="puzzle-difficulty">입문</span>
+          </div>
+          <h2 id="puzzle-title">왕 바로 옆의 약점</h2>
+          <p id="puzzle-description">백의 차례. 퀸을 움직여 한 수 만에 체크메이트를 만들어 보자.</p>
           <div class="puzzle-status" id="puzzle-status" role="status" aria-live="polite">흰색 퀸을 먼저 선택해 주세요.</div>
-          <button class="reset-button" id="reset-puzzle" type="button">처음부터 ↻</button>
+          <div class="puzzle-actions">
+            <button class="reset-button" id="reset-puzzle" type="button">다시 풀기 ↻</button>
+            <span class="move-answer" id="move-answer" aria-live="polite"></span>
+          </div>
           <a class="puzzle-next" href="#closing" data-route="closing">마지막 이야기 <span>→</span></a>
         </div>
         <div class="board-wrap reveal">
-          <div class="board-topline"><span>WHITE TO MOVE</span><span>♕</span></div>
+          <div class="puzzle-picker" id="puzzle-picker" aria-label="퍼즐 선택"></div>
+          <div class="board-topline"><span>WHITE TO MOVE</span><span id="focus-piece">♕</span></div>
           <div class="chessboard" id="chessboard" aria-label="체스 퍼즐 보드"></div>
-          <p class="board-hint">힌트 · 가장 약한 칸은 왕 바로 옆에 있어.</p>
+          <div class="celebration" id="celebration" aria-hidden="true"></div>
+          <p class="board-hint" id="board-hint">힌트 · 가장 약한 칸은 왕 바로 옆에 있어.</p>
+          <div class="puzzle-nav">
+            <button type="button" id="previous-puzzle">← 이전</button>
+            <button type="button" id="next-puzzle">다음 퍼즐 →</button>
+          </div>
         </div>
       </section>
 

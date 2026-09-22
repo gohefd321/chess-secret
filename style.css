@@ -43,6 +43,12 @@ nav a[aria-current="page"]::after { width: 100%; }
 .hero { min-height: calc(100svh - 74px); position: relative; display: flex; align-items: center; color: var(--cream); isolation: isolate; }
 .hero-image { position: absolute; inset: 0; z-index: -2; background: url("assets/chess-hero.png") center center / cover no-repeat; }
 .hero-shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(6,13,10,.9) 0%, rgba(6,13,10,.65) 36%, rgba(6,13,10,.05) 72%), linear-gradient(0deg, rgba(5,9,7,.45), transparent 45%); }
+.hero-floaters { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.hero-floaters span { position: absolute; color: rgba(255,255,255,.1); font-family: Georgia, serif; filter: blur(.2px); animation: float-piece 7s ease-in-out infinite; }
+.hero-floaters span:nth-child(1) { left: 44%; top: 15%; font-size: 54px; }
+.hero-floaters span:nth-child(2) { left: 7%; bottom: 9%; font-size: 70px; animation-delay: -2.5s; }
+.hero-floaters span:nth-child(3) { right: 5%; top: 11%; font-size: 48px; animation-delay: -4.5s; }
+@keyframes float-piece { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-16px) rotate(5deg); } }
 .hero-copy { width: min(780px, 82vw); margin-left: clamp(24px, 8vw, 132px); padding: 90px 0; }
 .eyebrow { margin: 0 0 24px; color: #d6cbb3; font-family: var(--font-label); font-size: 12px; letter-spacing: .21em; font-weight: 600; }
 .hero h1, h2 { font-family: var(--font-display); font-weight: 400; }
@@ -73,7 +79,9 @@ nav a[aria-current="page"]::after { width: 100%; }
 .moments-heading { margin: 68px 0 60px; display: flex; justify-content: space-between; align-items: end; }
 .moments-heading p { max-width: 240px; color: #bfc5bb; line-height: 1.7; }
 .moment-list { border-top: 1px solid rgba(255,255,255,.2); }
-.moment-card { min-height: 220px; padding: 28px 0; display: grid; grid-template-columns: 70px 190px 1fr; gap: 30px; align-items: center; border-bottom: 1px solid rgba(255,255,255,.2); }
+.moment-card { position: relative; min-height: 220px; padding: 28px 0; display: grid; grid-template-columns: 70px 190px 1fr; gap: 30px; align-items: center; border-bottom: 1px solid rgba(255,255,255,.2); overflow: hidden; }
+.moment-card::before { content: ""; position: absolute; inset: auto 0 0; height: 3px; background: var(--rainbow); transform: scaleX(0); transform-origin: left; transition: transform .45s; }
+.moment-card:hover::before { transform: scaleX(1); }
 .card-no { align-self: start; padding-top: 7px; color: #9aa49a; font-size: 12px; }
 .piece-art { color: var(--red); font-family: serif; font-size: 120px; line-height: 1; text-align: center; transition: .35s; }
 .moment-card:hover .piece-art { transform: rotate(-8deg) translateY(-6px); }
@@ -89,18 +97,36 @@ nav a[aria-current="page"]::after { width: 100%; }
 .page-next:hover b { transform: translateX(8px); }
 .light-next { border-color: rgba(255,255,255,.24); }
 
-.puzzle { display: grid; grid-template-columns: .85fr 1.15fr; gap: 9vw; align-items: center; background: #e7e0d1; }
+.puzzle { position: relative; isolation: isolate; display: grid; grid-template-columns: .85fr 1.15fr; gap: 9vw; align-items: center; overflow: hidden; background: #e7e0d1; }
+.puzzle-glow { position: absolute; z-index: -1; width: 440px; aspect-ratio: 1; border-radius: 50%; filter: blur(80px); opacity: .2; pointer-events: none; }
+.glow-one { right: -130px; top: -150px; background: var(--blue); }
+.glow-two { left: 18%; bottom: -270px; background: var(--red); }
 .puzzle-copy .section-label { margin-bottom: 65px; }
 .rainbow-text { margin-bottom: 15px; width: max-content; }
+.puzzle-meta { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.puzzle-meta .eyebrow { margin-bottom: 15px; }
+.puzzle-meta b { font-weight: 600; }
+.difficulty { padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; font-family: var(--font-note); font-size: 16px; }
 .puzzle-copy > p:not(.eyebrow) { max-width: 440px; margin: 25px 0; font-family: var(--font-story); font-size: 17px; line-height: 1.8; }
 .puzzle-status { min-height: 50px; margin-top: 34px; padding: 15px 18px; border-left: 4px solid; border-image: linear-gradient(180deg, var(--red), var(--yellow), var(--green), var(--blue), var(--violet)) 1; background: rgba(255,255,255,.44); font-family: var(--font-display); font-size: 14px; }
 .puzzle-status.success { background: var(--moss); color: white; }
 .reset-button { margin-top: 16px; padding: 0; border: 0; border-bottom: 1px solid; background: transparent; cursor: pointer; font-family: var(--font-note); font-size: 17px; }
+.puzzle-actions { min-height: 45px; display: flex; justify-content: space-between; align-items: baseline; gap: 20px; }
+.move-answer { color: var(--indigo); font-family: var(--font-label); font-size: 20px; font-weight: 600; letter-spacing: .08em; }
 .puzzle-next { margin-top: 30px; display: flex; justify-content: space-between; padding: 16px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-family: var(--font-accent); font-size: 19px; }
-.board-wrap { max-width: 620px; }
+.board-wrap { position: relative; max-width: 620px; perspective: 1200px; }
+.puzzle-picker { margin-bottom: 18px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.puzzle-dot { height: 8px; padding: 0; border: 0; border-radius: 99px; background: rgba(23,24,19,.17); cursor: pointer; overflow: hidden; transition: height .25s, background .25s; }
+.puzzle-dot::after { content: ""; display: block; width: 0; height: 100%; background: var(--rainbow); transition: width .35s; }
+.puzzle-dot.active { height: 12px; background: rgba(23,24,19,.1); }
+.puzzle-dot.active::after, .puzzle-dot.solved::after { width: 100%; }
 .board-topline { margin-bottom: 12px; display: flex; justify-content: space-between; font-family: var(--font-label); font-size: 11px; letter-spacing: .18em; }
 .board-topline span:last-child { font-size: 23px; color: var(--violet); }
-.chessboard { width: 100%; aspect-ratio: 1; display: grid; grid-template-columns: repeat(8, 1fr); border: 10px solid var(--ink); box-shadow: 18px 20px 0 rgba(38,55,45,.15); }
+.chessboard { width: 100%; aspect-ratio: 1; display: grid; grid-template-columns: repeat(8, 1fr); border: 10px solid var(--ink); box-shadow: 18px 20px 0 rgba(38,55,45,.15); transform: rotateX(1deg); transition: transform .35s, box-shadow .35s; }
+.board-wrap:hover .chessboard { transform: rotateX(0) translateY(-3px); box-shadow: 20px 25px 0 rgba(38,55,45,.12); }
+.chessboard.wrong { animation: board-shake .4s ease; }
+.chessboard.solved { box-shadow: 0 0 0 5px var(--green), 18px 20px 0 rgba(38,55,45,.15), 0 0 55px rgba(82,188,233,.38); }
+@keyframes board-shake { 20% { transform: translateX(-8px); } 40% { transform: translateX(7px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(3px); } }
 .square { position: relative; display: grid; place-items: center; border: 0; padding: 0; cursor: default; font-family: Georgia, serif; font-size: clamp(24px, 4.5vw, 54px); line-height: 1; }
 .square.light { background: #e8dfca; }
 .square.dark { background: #73806d; }
@@ -109,7 +135,16 @@ nav a[aria-current="page"]::after { width: 100%; }
 .square.selected::after { content: ""; position: absolute; inset: 6px; border: 4px solid var(--yellow); box-shadow: 0 0 0 2px var(--violet); border-radius: 50%; }
 .square.target::before { content: ""; position: absolute; width: 22%; aspect-ratio: 1; border-radius: 50%; background: var(--rainbow); opacity: .95; }
 .square.mated { background: linear-gradient(135deg, var(--red), var(--yellow), var(--green), var(--blue), var(--violet)); }
+.square.last-move::after { content: ""; position: absolute; inset: 5px; border: 3px solid var(--yellow); box-shadow: 0 0 16px rgba(244,216,75,.8); animation: move-flash .8s ease both; }
+@keyframes move-flash { from { transform: scale(.65); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.celebration { position: absolute; inset: 40px 0 60px; pointer-events: none; overflow: hidden; }
+.confetti { position: absolute; top: 0; width: 9px; height: 16px; border-radius: 2px; animation: confetti-fall 1.5s cubic-bezier(.2,.65,.4,1) forwards; }
+@keyframes confetti-fall { 0% { opacity: 0; transform: translateY(-20px) rotate(0); } 12% { opacity: 1; } 100% { opacity: 0; transform: translateY(520px) rotate(620deg); } }
 .board-hint { margin-top: 22px; color: #64655d; font-family: var(--font-note); font-size: 18px; text-align: center; }
+.puzzle-nav { margin-top: 20px; display: flex; justify-content: space-between; }
+.puzzle-nav button { padding: 9px 0; border: 0; border-bottom: 1px solid transparent; background: none; font-family: var(--font-display); cursor: pointer; }
+.puzzle-nav button:hover { border-color: currentColor; }
+.puzzle-nav button:disabled { opacity: .3; cursor: default; }
 
 .closing { min-height: 540px; padding: 80px 10vw; display: grid; grid-template-columns: 1fr 1fr; align-items: center; overflow: hidden; background: linear-gradient(125deg, #ff7b84 0%, #ffbe62 21%, #f4df68 36%, #69d6a0 54%, #67c5ee 72%, #9584e7 87%, #dc79d6 100%); color: var(--ink); }
 .closing-piece { align-self: end; height: 460px; font-family: Georgia, serif; font-size: clamp(330px, 42vw, 610px); line-height: .9; color: #f6e9d4; transform: translate(-12%, 24%); text-shadow: 20px 22px 0 rgba(80,40,29,.14); }
@@ -150,7 +185,11 @@ footer button { color: inherit; border: 0; background: none; cursor: pointer; le
   .page-next { grid-template-columns: 1fr auto; margin-top: 42px; }
   .page-next small { display: none; }
   .puzzle-copy .section-label { margin-bottom: 48px; }
+  .puzzle { gap: 64px; }
+  .puzzle-glow { width: 260px; }
   .square { font-size: clamp(26px, 9vw, 48px); }
+  .chessboard { border-width: 7px; box-shadow: 9px 11px 0 rgba(38,55,45,.15); }
+  .board-wrap:hover .chessboard { transform: none; box-shadow: 9px 11px 0 rgba(38,55,45,.15); }
   .closing { min-height: 620px; grid-template-columns: 1fr; padding-bottom: 0; }
   .closing-copy { grid-row: 1; }
   .closing-piece { grid-row: 2; height: 250px; justify-self: center; transform: translateY(25%); font-size: 340px; }
@@ -162,4 +201,5 @@ footer button { color: inherit; border: 0; background: none; cursor: pointer; le
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: .01ms !important; }
   .reveal { opacity: 1; transform: none; }
+  .hero-floaters span, .confetti { animation: none; }
 }

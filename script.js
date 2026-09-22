@@ -1,66 +1,61 @@
 const menuButton = document.querySelector('.menu-toggle');
 const nav = document.querySelector('#site-nav');
-const pages = [...document.querySelectorAll('[data-page]')];
-const routeLinks = [...document.querySelectorAll('[data-route]')];
-const pageTitles = {
-  home: '나만 아는 재미 — 체스',
-  charm: '체스의 매력 — 나만 아는 재미',
-  moments: '좋아하는 세 순간 — 나만 아는 재미',
-  puzzle: '당신의 한 수 — 나만 아는 재미',
-  closing: '오늘, 한 판 어때? — 나만 아는 재미'
-};
-
-function showPage(route) {
-  const currentRoute = pageTitles[route] ? route : 'home';
-  const targetPage = document.querySelector(`[data-page="${currentRoute}"]`);
-
-  pages.forEach((page) => {
-    page.hidden = page !== targetPage;
-    page.classList.remove('active');
-  });
-
-  targetPage.hidden = false;
-  requestAnimationFrame(() => {
-    targetPage.classList.add('active');
-    targetPage.querySelectorAll('.reveal').forEach((element) => element.classList.add('visible'));
-  });
-
-  routeLinks.forEach((link) => {
-    if (link.closest('nav')) {
-      if (link.dataset.route === currentRoute) link.setAttribute('aria-current', 'page');
-      else link.removeAttribute('aria-current');
-    }
-  });
-
-  document.title = pageTitles[currentRoute];
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+menuButton.addEventListener('click', () => {
+  const open = nav.classList.toggle('open');
+  menuButton.setAttribute('aria-expanded', String(open));
+  menuButton.textContent = open ? '닫기' : '메뉴';
+});
+nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
   nav.classList.remove('open');
   menuButton.setAttribute('aria-expanded', 'false');
   menuButton.textContent = '메뉴';
-  window.scrollTo({ top: 0, behavior: 'auto' });
-}
-
-function routeFromHash() {
-  showPage(window.location.hash.slice(1) || 'home');
-}
-
-menuButton.addEventListener('click', () => {
-  const isOpen = nav.classList.toggle('open');
-  menuButton.setAttribute('aria-expanded', String(isOpen));
-  menuButton.textContent = isOpen ? '닫기' : '메뉴';
-});
-
-window.addEventListener('hashchange', routeFromHash);
-
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
+}));
+if ('IntersectionObserver' in window) {
+  document.body.classList.add('motion-ready');
+  const observer = new IntersectionObserver(entries => entries.forEach(entry => {
     if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
+      entry.target.classList.remove('pending');
       observer.unobserve(entry.target);
     }
+  }), { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(element => {
+    element.classList.add('pending');
+    observer.observe(element);
   });
-}, { threshold: 0.14 });
-
-document.querySelectorAll('.reveal').forEach((element) => observer.observe(element));
+}
+let scrollScheduled = false;
+function updateScene() {
+  const range = document.documentElement.scrollHeight - innerHeight;
+  document.querySelector('.reading-progress').style.transform = 'scaleX(' + (range > 0 ? scrollY / range : 0) + ')';
+  const scene = document.querySelector('.cinema');
+  const rect = scene.getBoundingClientRect();
+  if (!reducedMotion.matches && rect.top < innerHeight && rect.bottom > 0) {
+    document.querySelector('.cinema-backdrop').style.transform = 'translateY(' + Math.max(-60, Math.min(60, -rect.top * .08)) + 'px) scale(1.05)';
+  }
+  scrollScheduled = false;
+}
+addEventListener('scroll', () => {
+  if (!scrollScheduled) { requestAnimationFrame(updateScene); scrollScheduled = true; }
+}, { passive: true });
+addEventListener('resize', updateScene);
+updateScene();
+document.querySelectorAll('.story-card, .board-stage').forEach(element => {
+  element.addEventListener('pointermove', event => {
+    if (reducedMotion.matches || event.pointerType !== 'mouse') return;
+    const rect = element.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - .5;
+    const y = (event.clientY - rect.top) / rect.height - .5;
+    const boardScene = element.querySelector('.sculpture-board');
+    if (boardScene) boardScene.style.transform = 'rotateX(' + (55 - y * 8) + 'deg) rotateZ(' + (-30 + x * 10) + 'deg)';
+    else element.style.transform = 'perspective(900px) rotateX(' + (-y * 5) + 'deg) rotateY(' + (x * 5) + 'deg)';
+  });
+  element.addEventListener('pointerleave', () => {
+    element.style.transform = '';
+    const boardScene = element.querySelector('.sculpture-board');
+    if (boardScene) boardScene.style.transform = '';
+  });
+});
 
 const board = document.querySelector('#chessboard');
 const status = document.querySelector('#puzzle-status');
@@ -190,9 +185,11 @@ function drawBoard() {
         square.classList.add(`${piece[1]}-piece`);
       }
       if (selected === position) square.classList.add('selected');
-      if (selected === puzzle.solution.from && position === puzzle.solution.to) square.classList.add('target');
       if (solved && position === puzzle.solution.highlight) square.classList.add('mated');
       if (lastMove === position) square.classList.add('last-move');
+      const coordinate = document.createElement('small');
+      coordinate.textContent = position;
+      square.appendChild(coordinate);
       square.addEventListener('click', handleSquareClick);
       board.appendChild(square);
     }
@@ -265,6 +262,7 @@ function loadPuzzle(index) {
 }
 
 function launchConfetti() {
+  if (reducedMotion.matches) return;
   const colors = ['#ff5f6d', '#ff9e45', '#f4d84b', '#4fc98b', '#52bce9', '#7771df', '#ce66cf'];
   celebration.innerHTML = '';
   for (let index = 0; index < 34; index += 1) {
@@ -283,9 +281,119 @@ resetButton.addEventListener('click', () => loadPuzzle(currentPuzzle));
 previousButton.addEventListener('click', () => loadPuzzle(currentPuzzle - 1));
 nextButton.addEventListener('click', () => loadPuzzle(currentPuzzle + 1));
 document.querySelector('#to-top').addEventListener('click', () => {
-  if (window.location.hash === '#home') showPage('home');
-  else window.location.hash = 'home';
+  document.querySelector('#home').scrollIntoView({ behavior: reducedMotion.matches ? 'instant' : 'smooth' });
 });
 
 loadPuzzle(0);
-routeFromHash();
+
+const pieceGuide = [
+  ['♔', 'KING', '킹 · 지켜야 할 단 한 말', '모든 방향으로 한 칸. 상대에게 공격받는 칸으로는 갈 수 없다. 체크를 받으면 반드시 해소해야 한다.', '킹의 안전이 모든 계획의 출발점.'],
+  ['♕', 'QUEEN', '퀸 · 가장 넓은 시야', '가로, 세로, 대각선으로 원하는 만큼 이동한다. 다른 말을 뛰어넘을 수는 없다.', '강하지만 혼자서는 모든 일을 할 수 없어.'],
+  ['♖', 'ROOK', '룩 · 열린 길의 지배자', '가로와 세로로 원하는 만큼 이동한다. 폰이 없는 열린 열에서 힘을 발휘한다.', '막힌 길이 열리면 룩의 시간이 온다.'],
+  ['♗', 'BISHOP', '비숍 · 대각선의 전문가', '대각선으로 원하는 만큼 이동한다. 처음 놓인 칸과 같은 색의 칸만 다닌다.', '멀리 있는 말도 같은 대각선 위라면.'],
+  ['♘', 'KNIGHT', '나이트 · 예상 밖의 도약', '한 방향으로 두 칸, 직각으로 한 칸을 움직인다. 유일하게 다른 말을 뛰어넘을 수 있다.', '두 말을 동시에 노리는 포크의 주인공.'],
+  ['♙', 'PAWN', '폰 · 작지만 긴 이야기', '앞으로 한 칸, 첫 이동에는 두 칸도 가능하다. 상대 말은 앞쪽 대각선 한 칸에서 잡는다. 끝줄에 닿으면 퀸·룩·비숍·나이트로 승격한다.', '앙파상 같은 특별 규칙은 기본 움직임에 익숙해진 뒤 배워도 좋아.']
+];
+const tabs = document.querySelector('.piece-tabs');
+function selectPiece(index) {
+  const item = pieceGuide[index];
+  ['piece-symbol', 'piece-english', 'piece-name', 'piece-description', 'piece-tip'].forEach((id, field) => {
+    document.getElementById(id).textContent = item[field];
+  });
+  [...tabs.children].forEach((button, buttonIndex) => button.setAttribute('aria-pressed', String(index === buttonIndex)));
+}
+pieceGuide.forEach((item, index) => {
+  const button = document.createElement('button');
+  button.textContent = item[0];
+  button.setAttribute('aria-label', item[2]);
+  button.addEventListener('click', () => selectPiece(index));
+  tabs.appendChild(button);
+});
+selectPiece(0);
+
+// A legal Scholar's Mate sequence: 1.e4 e5 2.Bc4 Nc6 3.Qh5 Nf6 4.Qxf7#.
+const startPosition = {};
+const whiteBack = ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖'];
+const blackBack = ['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'];
+for (let file = 0; file < 8; file += 1) {
+  const letter = String.fromCharCode(97 + file);
+  startPosition[letter + '1'] = [whiteBack[file], 'white'];
+  startPosition[letter + '2'] = ['♙', 'white'];
+  startPosition[letter + '7'] = ['♟', 'black'];
+  startPosition[letter + '8'] = [blackBack[file], 'black'];
+}
+const reviewSteps = [
+  { moves: [], notation: 'START / 대국 전', title: '모든 이야기는 여기서.', description: '백부터 한 수씩 번갈아 둔다. 지금은 폰이 길을 막고 있어 비숍과 퀸이 나오기 어렵다.', question: '중앙 폰을 움직이면 어떤 말의 길이 열릴까?' },
+  { moves: [['e2','e4'],['e7','e5']], notation: '1. e4 e5', title: '중앙에 첫 발을 딛다.', description: '양쪽 모두 중앙을 차지하면서 비숍과 퀸의 길을 열었다. 좋은 오프닝은 여러 말이 함께 나올 자리를 만든다.', question: '한 말만 계속 움직이는 것과 여러 말을 전개하는 것, 무엇이 다를까?' },
+  { moves: [['f1','c4'],['b8','c6']], notation: '2. Bc4 Nc6', title: '비숍의 시선은 f7로.', description: '백 비숍은 c4에서 f7 폰을 바라본다. 흑은 나이트를 전개했지만 f7은 여전히 왕 하나만 지키고 있다.', question: '누가 지키고 있는지 세어 보면 약한 칸을 찾을 수 있을까?' },
+  { moves: [['d1','h5'],['g8','f6']], notation: '3. Qh5 Nf6?', title: '공격하기 전에, 위협부터.', description: '흑 나이트가 퀸을 공격했다. 하지만 백 퀸과 비숍이 함께 f7을 노린다. 퀸을 쫓는 것보다 메이트 위협을 막는 일이 급하다. 예를 들어 3…g6으로 대각선을 막는 방어를 검토할 수 있다.', question: '상대가 다음 수에 할 수 있는 가장 강한 체크는 무엇일까?' },
+  { moves: [['h5','f7']], notation: '4. Qxf7#', title: '복기의 핵심은 한 수 전.', description: '퀸이 f7을 잡으며 체크메이트. 비숍이 퀸을 지켜 왕은 퀸을 잡을 수 없다. 결과를 탓하기보다, 직전 수에서 위협을 확인하지 못한 이유를 찾는다.', question: '다음 판에는 말을 두기 전에 상대의 체크를 한 번 확인해 볼까?' }
+];
+let reviewIndex = 0;
+let reviewTimer = null;
+const reviewBoard = document.querySelector('#review-board');
+function renderReview() {
+  const position = clonePieces(startPosition);
+  let destination = '';
+  for (let index = 0; index <= reviewIndex; index += 1) {
+    for (const [from, to] of reviewSteps[index].moves) {
+      position[to] = position[from];
+      delete position[from];
+      destination = to;
+    }
+  }
+  reviewBoard.replaceChildren();
+  for (let rank = 8; rank >= 1; rank -= 1) {
+    for (let file = 0; file < 8; file += 1) {
+      const coordinate = String.fromCharCode(97 + file) + rank;
+      const piece = position[coordinate];
+      const square = document.createElement('div');
+      square.className = 'square ' + ((file + rank) % 2 === 0 ? 'light' : 'dark');
+      if (piece) {
+        square.textContent = piece[0];
+        square.classList.add(piece[1] + '-piece');
+      }
+      if (coordinate === destination) square.classList.add('last-move');
+      square.setAttribute('aria-label', coordinate + (piece ? ' ' + piece[0] : ' 빈 칸'));
+      const label = document.createElement('small');
+      label.textContent = coordinate;
+      square.appendChild(label);
+      reviewBoard.appendChild(square);
+    }
+  }
+  const step = reviewSteps[reviewIndex];
+  document.querySelector('#review-count').textContent = '0' + (reviewIndex + 1) + ' / 05';
+  ['notation','title','description','question'].forEach(field => {
+    document.querySelector('#review-' + field).textContent = step[field];
+  });
+  document.querySelector('#review-prev').disabled = reviewIndex === 0;
+  document.querySelector('#review-next').disabled = reviewIndex === reviewSteps.length - 1;
+}
+function stopReview() {
+  clearInterval(reviewTimer);
+  reviewTimer = null;
+  document.querySelector('#review-play').textContent = '자동 재생 ▷';
+}
+document.querySelector('#review-prev').addEventListener('click', () => { stopReview(); reviewIndex = Math.max(0, reviewIndex - 1); renderReview(); });
+document.querySelector('#review-next').addEventListener('click', () => { stopReview(); reviewIndex = Math.min(4, reviewIndex + 1); renderReview(); });
+document.querySelector('#review-play').addEventListener('click', () => {
+  if (reviewTimer) { stopReview(); return; }
+  if (reviewIndex === 4) { reviewIndex = 0; renderReview(); }
+  document.querySelector('#review-play').textContent = '일시 정지 Ⅱ';
+  reviewTimer = setInterval(() => {
+    reviewIndex += 1;
+    renderReview();
+    if (reviewIndex === 4) stopReview();
+  }, 5000);
+});
+document.addEventListener('visibilitychange', () => { if (document.hidden) stopReview(); });
+renderReview();
+const note = document.querySelector('#review-note');
+const noteStatus = document.querySelector('#note-status');
+try { note.value = localStorage.getItem('chess-review-note') || ''; } catch { noteStatus.textContent = '이 환경에서는 메모가 현재 화면에만 유지돼요.'; }
+note.addEventListener('input', () => {
+  try {
+    localStorage.setItem('chess-review-note', note.value);
+    noteStatus.textContent = '이 브라우저에 저장했어요.';
+  } catch { noteStatus.textContent = '저장할 수 없는 환경이에요. 떠나기 전에 메모를 복사해 주세요.'; }
+});
